@@ -5,7 +5,7 @@ const jwksRsa = require("jwks-rsa");
 const cors = require("cors");
 const app = express();
 
-const { displayStateMap, jwtAuthz } = require("express-jwt-aserto");
+const { jwtAuthz } = require("express-jwt-aserto");
 
 const authzOptions = {
     authorizerServiceUrl: process.env.AUTHORIZER_SERVICE_URL,
@@ -34,8 +34,6 @@ const checkJwt = jwt({
 
 // Enable CORS
 app.use(cors())
-
-app.use(displayStateMap(authzOptions));
 
 
 // Protected API endpoint
