@@ -1,37 +1,12 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useAuth } from "oidc-react";
-import { useAserto } from "@aserto/aserto-react";
 
 function App() {
   const auth = useAuth();
   const isAuthenticated = auth.userData?.id_token ? true : false;
   const [message, setMessage] = useState(false);
 
-  const { init, loading, getDisplayState, error: asertoError } = useAserto();
 
-  useEffect(() => {
-    async function initAserto() {
-      try {
-        const token = auth.userData?.id_token;
-  
-        if (token) {
-          await init({
-            serviceUrl: "http://localhost:8080",
-            accessToken: token,
-            policyRoot: "asertodemo",
-            throwOnError: false,
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    if (!asertoError && isAuthenticated) {
-      initAserto();
-    }
-  
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, auth.userData?.id_token]);
 
  const accessSensitiveInformation = useCallback(async () => {
   try {
@@ -65,18 +40,6 @@ function App() {
     }
   });
 
-  if (asertoError) {
-    return (
-      <div>
-        <h1>Error encountered</h1>
-        <p>{asertoError}</p>
-      </div>
-    );
-  }
-  const displayState =
-  loading || asertoError
-    ? { visible: false, enabled: false }
-    : getDisplayState("GET", "/api/protected");
 
   return (
     <div className="container">
@@ -116,7 +79,6 @@ function App() {
               {!message && (
                 <button
                   className="primary-button"
-                  disabled={!displayState.enabled}
                   onClick={() => accessSensitiveInformation()}
                 >
                   Get Sensitive Resource
